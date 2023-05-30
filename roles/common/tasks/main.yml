@@ -1,0 +1,8 @@
+---
+- include_tasks: set-hosts.yml   
+##
+- include_tasks: set-yum-repo-cdrom.yml
+- include_tasks: set-centos7.yml
+#- include_tasks: set-yum-repo-local.yml
+- include_tasks: install-base-tools.yml
+#- include_tasks: set-hy.yml

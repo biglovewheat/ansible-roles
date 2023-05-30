@@ -1,0 +1,5 @@
+prometheus_server: 192.168.8.201:9090
+prometheus_base_path: /data/moni
+chrony_server: 192.168.8.201
+chrony_priority_networks: 192.168.8.0/24
+yum_server: 192.168.8.251:18001

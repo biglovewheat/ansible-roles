@@ -1,0 +1,66 @@
+- name: disable firewalld
+  shell: "{{ item }}"
+  with_items:
+    - "systemctl stop firewalld.service"
+    - "systemctl disable firewalld.service"
+
+- name: disable selinux
+  shell: "{{ item }}"
+  with_items:
+    - "setenforce 0"
+    - "sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/selinux/config"
+
+- name: set hostname
+  shell: "{{ item }}"
+  with_items:
+    - "hostnamectl set-hostname {{hostname}}"
+
+- name: set timezone
+  shell: "{{ item }}"
+  with_items:
+    - "timedatectl set-timezone Asia/Shanghai"
+    - "systemctl restart rsyslog crond"
+
+- name: set /etc/profile
+  lineinfile: 
+    dest: /etc/profile
+    regex: '^set -o vi'
+    line: 'set -o vi'
+  lineinfile:
+    dest: /etc/profile
+    regex: '^ulimit -SHn 65535'
+    line: 'ulimit -SHn 65535'
+
+- name: set limits.conf
+  copy: src=limits.conf dest=/etc/security/limits.conf mode=644
+
+- name: set sysctl.conf -- 1
+  copy: src=sysctl.conf dest=/etc/sysctl.conf mode=640
+
+- name: set sysctl.conf -- 2
+  shell: "sysctl -p "
+
+## ture off swap
+- name: ture off swap
+  shell: "{{ item }} "
+  with_items:
+    - "swapoff -a"
+    - "sed -ri 's/.*swap.*/#&/' /etc/fstab"
+
+##  set chrony
+- name: set chrony -- 1
+  yum:
+    name: chrony
+    state: installed
+
+- name: set chrony -- 2
+  template:
+    src: chrony.conf.j2
+    dest: /etc/chrony.conf
+    trim_blocks: no
+  notify:
+    - restart chronyd
+
+- name: set chrony -- 3
+  shell: "systemctl enable chronyd ; systemctl restart chronyd"
+

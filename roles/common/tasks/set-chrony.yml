@@ -1,0 +1,19 @@
+---
+- name: ensure that chronyd is installed
+  yum:
+    name: chrony
+    state: installed
+
+- name: modify /etc/chrony.conf
+  template:
+    src: chrony.conf.j2
+    dest: /etc/chrony.conf
+    trim_blocks: no
+  notify:
+    - restart chronyd
+
+- name: ensure that chronyd is started and enabled
+  systemd:
+    name: chronyd
+    state: started
+    enabled: yes

@@ -1,0 +1,14 @@
+- name: copy file
+  copy: src=    dst=
+
+- name: unregister
+  shell: "{{ item }}"
+  with_items:
+    - "setenforce 0"
+    - "sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/selinux/config"
+
+- name: register
+  shell: "{{ item }}"
+  with_items:
+    - "setenforce 0"
+    - "sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/selinux/config"

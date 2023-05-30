@@ -1,0 +1,7 @@
+---
+- name: yum clean all
+  shell: yum clean all
+- name: yum makecache
+  shell: yum makecache
+- name: centos_tools
+  shell: "yum install -y gcc wget curl net-tools telnet vim iftop iotop rsync lrzsz zip unzip"

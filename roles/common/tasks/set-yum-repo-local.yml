@@ -1,0 +1,9 @@
+---
+- name: backup yum repo files
+  shell: 'find /etc/yum.repos.d/ -name "*.repo" -exec mv {} {}.$(date +"%Y%m%d%H%M") \;'
+
+- name: set yum repo
+  template: src=local.repo.j2 dest=/etc/yum.repos.d/local.repo
+
+#- name: replace yum repo address
+#  shell: "sed -i 's|[yum_server]|{{ yum_server }}|g' /etc/yum.repos.d/local.repo"

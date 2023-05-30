@@ -1,0 +1,13 @@
+---
+- name: backup yum repo files
+  shell: 'find /etc/yum.repos.d/ -name "*.repo" -exec mv {} {}.$(date +"%Y%m%d%H%M") \;'
+  when: server_type=="app"
+
+- name: mount cdrom
+  ignore_errors: yes
+  shell: 'mkdir -p /cdrom && mount /dev/sr0 /cdrom'
+  when: server_type=="app"
+
+- name: set yum repo
+  copy: src=cdrom.repo dest=/etc/yum.repos.d/cdrom.repo
+  when: server_type=="app"
