@@ -1,8 +1,8 @@
-server {{ chrony_server }} iburst
+server {{ chrony.server }} iburst
 driftfile /var/lib/chrony/drift
 makestep 1.0 3
 rtcsync
-allow {{ chrony_priority_networks }}
+allow {{ chrony.priority_networks }}
 bindcmdaddress 127.0.0.1
 bindcmdaddress ::1
 keyfile /etc/chrony.keys
