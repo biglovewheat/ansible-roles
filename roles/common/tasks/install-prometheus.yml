@@ -1,14 +1,36 @@
-- name: copy file
-  copy: src=    dst=
+---
+- name: install prometheus -- copy file 1
+  copy: src=node_exporter dest={{ prometheus.base_path }}/
 
-- name: unregister
-  shell: "{{ item }}"
-  with_items:
-    - "setenforce 0"
-    - "sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/selinux/config"
+- name: install prometheus -- copy file 2
+  copy: src=process_exporter dest={{ prometheus.base_path }}/
 
-- name: register
-  shell: "{{ item }}"
+- name: install prometheus -- copy service 1
+  template: src=node_exporter.service.j2  dest=/usr/lib/systemd/system/node_exporter.service
+
+- name: install prometheus -- copy service 2
+  template: src=process_exporter.service.j2  dest=/usr/lib/systemd/system/process_exporter.service
+
+- name: install prometheus -- copy sh 1
+  template: src=node_exporter_register.sh.j2  dest={{ prometheus.base_path }}/node_exporter/register.sh
+
+- name: install prometheus -- copy sh 2
+  template: src=process_exporter_register.sh.j2  dest={{ prometheus.base_path }}/process_exporter/register.sh
+
+
+- name: install prometheus -- chmod
+  shell: "{{ item }} "
   with_items:
-    - "setenforce 0"
-    - "sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/selinux/config"
+    - "chmod u+x {{ prometheus.base_path }}/node_exporter/node_exporter"
+    - "chmod u+x {{ prometheus.base_path }}/process_exporter/process_exporter"
+    - "chmod u+x {{ prometheus.base_path }}/node_exporter/register.sh"
+    - "chmod u+x {{ prometheus.base_path }}/process_exporter/register.sh"
+
+- name: install prometheus -- start service
+  shell: "{{ item }} "
+  with_items:
+    - "systemctl daemon-reload"
+    - "systemctl enable node_exporter process_exporter"
+    - "systemctl restart node_exporter process_exporter"
+    - "{{ prometheus.base_path }}/node_exporter/register.sh"
+    - "{{ prometheus.base_path }}/process_exporter/register.sh"

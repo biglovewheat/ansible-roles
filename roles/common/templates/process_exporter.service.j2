@@ -1,0 +1,11 @@
+[Unit]
+Description=Prometheus Process Exporter
+After=network.target
+
+[Service]
+ExecStart= {{ prometheus.base_path }}/process_exporter/process_exporter --config.path {{ prometheus.base_path }}/process_exporter/process-name.yaml --web.listen-address=:51235
+User=root
+LimitNOFILE=65535
+
+[Install]
+WantedBy=multi-user.target

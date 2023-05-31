@@ -1,0 +1,9 @@
+#!/bin/sh
+
+client_ip={{ inventory_hostname }} 
+client_hostname={{ ansible_hostname }}
+consul_ip={{ prometheus.consul }}
+
+curl -X PUT "http://$consul_ip/v1/agent/service/deregister/node_exporter,$client_ip"
+
+curl -X PUT -d '{"id":"node_exporter,'$client_ip'","name":"node_exporter","address":"'$client_ip'","meta": {"hostname": "'$client_hostname'","business": "hy"},"port":51234,"checks": [{"http":"http://'$client_ip':51234/","interval":"5s"}]}' "http://$consul_ip/v1/agent/service/register"

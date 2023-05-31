@@ -1,0 +1,13 @@
+[Unit]
+Description=Prometheus node_exporter daemon
+After=network.target
+
+[Service]
+Type=simple
+User=root
+Group=root
+ExecStart= {{ prometheus.base_path }}/node_exporter/node_exporter  --collector.tcpstat --web.listen-address=:51234
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
